@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "614741062105",
+    "project_id": "truep2p-f7103",
+    "storage_bucket": "truep2p-f7103.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:614741062105:android:5707e94f5b3149ae8d29c8",
+        "android_client_info": {
+          "package_name": "com.example.p2pm"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZeVHSBMxichgfrRgn2lGAagNfVRCIwWo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
