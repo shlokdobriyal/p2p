@@ -1,4 +1,4 @@
-package com.example.p2pm;
+package com.example.Peerly;
 
 import org.junit.Test;
 

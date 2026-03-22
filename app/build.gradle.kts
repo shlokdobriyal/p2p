@@ -6,7 +6,7 @@ plugins {
 
 
 android {
-    namespace = "com.example.p2pm"
+    namespace = "com.example.Peerly"
     compileSdk {
         version = release(36)
     }
@@ -18,7 +18,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.p2pm"
+        applicationId = "com.example.Peerly"
         minSdk = 21
         targetSdk = 36
         versionCode = 1
@@ -52,4 +52,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation("com.google.android.material:material:1.11.0")
+    implementation("androidx.fragment:fragment:1.6.2")
 }

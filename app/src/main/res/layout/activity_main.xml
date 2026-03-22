@@ -1,42 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
-    <EditText
-        android:id="@+id/roomInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter Room ID (leave empty to create new)"
-        android:layout_marginBottom="8dp"/>
+    android:background="#0E0E16">
 
-    <Button
-        android:id="@+id/startButton"
+    <!-- Header bar -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Start / Join Room"
-        android:layout_marginBottom="8dp"/>
-    <TextView
-        android:id="@+id/chatBox"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="18dp"
+        android:paddingEnd="14dp"
+        android:background="#13131E"
+        android:elevation="2dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Peerly"
+            android:textSize="20sp"
+            android:textColor="#E0DFFF"
+            android:fontFamily="monospace"
+            android:letterSpacing="0.2"/>
+
+        <TextView
+            android:id="@+id/userLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="#7777BB"
+            android:fontFamily="monospace"
+            android:paddingEnd="10dp"/>
+
+        <TextView
+            android:id="@+id/changeUsername"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="change"
+            android:textSize="11sp"
+            android:textColor="#4A4AE0"
+            android:padding="6dp"
+            android:background="@drawable/chip_bg"/>
+
+    </LinearLayout>
+
+    <!-- Tab bar -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="#13131E"
+        app:tabTextColor="#44446A"
+        app:tabSelectedTextColor="#E0DFFF"
+        app:tabIndicatorColor="#4A4AE0"
+        app:tabIndicatorHeight="2dp"
+        app:tabTextAppearance="@style/TabTextStyle">
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="World Chat"/>
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Private Rooms"/>
+
+    </com.google.android.material.tabs.TabLayout>
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#1C1C30"/>
+
+    <!-- Fragment container -->
+    <FrameLayout
+        android:id="@+id/fragmentContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:text="Chat Messages:\n"
-        android:textSize="16sp"
-        android:background="#EEEEEE"
-        android:padding="10dp"/>
+        android:layout_weight="1"/>
 
-    <EditText
-        android:id="@+id/messageInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Type message"/>
-
-    <Button
-        android:id="@+id/sendButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Send"/>
 </LinearLayout>
