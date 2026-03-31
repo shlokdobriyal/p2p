@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#0E0E16">
+
+    <!-- Actions block -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="14dp"
+        android:background="#0E0E16">
+
+        <!-- Create room button (dashed outline style) -->
+        <Button
+            android:id="@+id/createRoomBtn"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="＋  Create new private room"
+            android:textSize="13sp"
+            android:textColor="#8888CC"
+            android:backgroundTint="#00000000"
+            android:background="@drawable/btn_dashed"
+            android:stateListAnimator="@null"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Join by code row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <EditText
+                android:id="@+id/joinRoomInput"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_weight="1"
+                android:hint="swift-tiger-42…"
+                android:textColor="#E0DFFF"
+                android:textColorHint="#44445A"
+                android:textSize="13sp"
+                android:fontFamily="monospace"
+                android:background="@drawable/input_bg"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:inputType="textNoSuggestions"
+                android:layout_marginEnd="8dp"/>
+
+            <Button
+                android:id="@+id/joinRoomBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="46dp"
+                android:text="Join"
+                android:textSize="13sp"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#4A4AE0"
+                android:stateListAnimator="@null"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:minWidth="0dp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Section label -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#1C1C30"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ACTIVE ROOMS"
+        android:textSize="10sp"
+        android:textColor="#44446A"
+        android:letterSpacing="0.15"
+        android:paddingStart="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="8dp"/>
+
+    <!-- Empty state -->
+    <TextView
+        android:id="@+id/emptyRoomsLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No active rooms. Create one above."
+        android:textSize="13sp"
+        android:textColor="#33334A"
+        android:textAlignment="center"
+        android:paddingTop="32dp"
+        android:visibility="gone"/>
+
+    <!-- Room list -->
+    <ListView
+        android:id="@+id/roomList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="#1C1C30"
+        android:dividerHeight="1dp"
+        android:overScrollMode="never"/>
+
+</LinearLayout>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#0E0E16">
+
+    <!-- Brand + input block -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingStart="28dp"
+        android:paddingEnd="28dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Peerly"
+            android:textSize="44sp"
+            android:textColor="#E0DFFF"
+            android:letterSpacing="0.25"
+            android:fontFamily="monospace"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PEER-TO-PEER MESSENGER"
+            android:textSize="10sp"
+            android:textColor="#55557A"
+            android:letterSpacing="0.2"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="40dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choose your handle"
+            android:textSize="13sp"
+            android:textColor="#8888AA"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="start"/>
+
+        <EditText
+            android:id="@+id/usernameInput"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="swift_fox or just_alex…"
+            android:textColor="#E0DFFF"
+            android:textColorHint="#44445A"
+            android:textSize="15sp"
+            android:fontFamily="monospace"
+            android:background="@drawable/input_bg"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:inputType="textNoSuggestions"
+            android:maxLength="20"
+            android:layout_marginBottom="12dp"/>
+
+        <Button
+            android:id="@+id/confirmUsernameBtn"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Enter"
+            android:textSize="15sp"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#4A4AE0"
+            android:stateListAnimator="@null"/>
+
+    </LinearLayout>
+
+    <!-- Online users bottom panel -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:background="@drawable/panel_bg">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ONLINE NOW — TAP TO USE"
+            android:textSize="10sp"
+            android:textColor="#44446A"
+            android:letterSpacing="0.15"
+            android:paddingStart="20dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp"/>
+
+        <ListView
+            android:id="@+id/existingUsersList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:divider="#1C1C30"
+            android:dividerHeight="1dp"/>
+
+    </LinearLayout>
+</LinearLayout>

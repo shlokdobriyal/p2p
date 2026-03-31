@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#0F0F14">
+
+    <!-- Status bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:background="#1A1A24">
+
+        <View
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:background="@drawable/dot_green"/>
+
+        <TextView
+            android:id="@+id/onlineCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0 online"
+            android:textSize="12sp"
+            android:textColor="#55CC88"
+            android:paddingStart="6dp"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="World Chat"
+            android:textSize="12sp"
+            android:textColor="#44446A"/>
+    </LinearLayout>
+
+    <!-- Chat messages -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/nearbyChatBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#CCCCEE"
+            android:textSize="14sp"
+            android:fontFamily="monospace"
+            android:lineSpacingMultiplier="1.4"/>
+    </ScrollView>
+
+    <!-- Input row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:background="#16161F">
+
+        <EditText
+            android:id="@+id/nearbyMessageInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Message everyone…"
+            android:textColor="#E8E8FF"
+            android:textColorHint="#44446A"
+            android:background="@drawable/input_bg"
+            android:padding="10dp"
+            android:maxLines="3"
+            android:inputType="textMultiLine"
+            android:layout_marginEnd="8dp"/>
+
+        <Button
+            android:id="@+id/nearbySendBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Send"
+            android:backgroundTint="#5555EE"
+            android:textColor="#FFFFFF"
+            android:minWidth="0dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"/>
+    </LinearLayout>
+</LinearLayout>
