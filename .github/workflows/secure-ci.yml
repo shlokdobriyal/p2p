@@ -88,7 +88,7 @@ jobs:
           category: "/language:java"
         # Results are uploaded to GitHub Security → Code Scanning tab as SARIF
 
-  # ════════════════════════════════════════════
+ # ════════════════════════════════════════════
   # JOB 3 – DEPENDENCY AUDIT (OWASP)
   # Checks all Gradle dependencies for known CVEs
   # ════════════════════════════════════════════
@@ -100,24 +100,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Cache Gradle packages
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: gradle-${{ runner.os }}-
-
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
-
       - name: Run OWASP Dependency-Check
         uses: dependency-check/Dependency-Check_Action@main
         with:
@@ -128,8 +110,7 @@ jobs:
             --enableRetired
             --failOnCVSS 7
             --out reports
-        # Compares every library in your Gradle lockfile against the NVD CVE database.
-        # Pipeline fails if any dependency has a CVSS score ≥ 7 (High/Critical).
+        # Compares every library against the NVD CVE database.
 
       - name: Upload OWASP Report
         uses: actions/upload-artifact@v4
@@ -137,7 +118,6 @@ jobs:
         with:
           name: owasp-report
           path: reports/
-
   # ════════════════════════════════════════════
   # JOB 4 – BUILD & TEST
   # ════════════════════════════════════════════
