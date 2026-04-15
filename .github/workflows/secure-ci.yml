@@ -1,0 +1,236 @@
+name: CI/CD Pipeline – Build, Security & Release
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+# ─────────────────────────────────────────────
+# PERMISSIONS – least-privilege principle
+# ─────────────────────────────────────────────
+permissions:
+  contents: read
+  security-events: write   # Required by CodeQL / SARIF upload
+  actions: read
+
+jobs:
+
+  # ════════════════════════════════════════════
+  # JOB 1 – SECRET SCANNING (Gitleaks)
+  # Runs first so we fail fast if creds leak
+  # ════════════════════════════════════════════
+  secret-scan:
+    name: 🔐 Secret Scanning (Gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # Full history needed for git-log scanning
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # Gitleaks scans every commit in the push for hardcoded secrets,
+        # API keys, passwords, tokens, etc. Fails the pipeline if found.
+
+  # ════════════════════════════════════════════
+  # JOB 2 – SAST: Static Application Security Testing (CodeQL)
+  # Analyses Java source for vulnerabilities
+  # ════════════════════════════════════════════
+  sast:
+    name: 🔍 SAST – CodeQL Analysis
+    runs-on: ubuntu-latest
+    needs: secret-scan
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: java
+          # CodeQL understands Java/Android; it will detect SQLi, path traversal,
+          # insecure deserialization, intent injection, and more.
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-${{ runner.os }}-
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build for CodeQL (debug, no signing needed)
+        run: ./gradlew assembleDebug --no-daemon
+        # CodeQL autobuild needs the project to compile to trace the call graph
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:java"
+        # Results are uploaded to GitHub Security → Code Scanning tab as SARIF
+
+  # ════════════════════════════════════════════
+  # JOB 3 – DEPENDENCY AUDIT (OWASP)
+  # Checks all Gradle dependencies for known CVEs
+  # ════════════════════════════════════════════
+  dependency-check:
+    name: 📦 Dependency Vulnerability Scan (OWASP)
+    runs-on: ubuntu-latest
+    needs: secret-scan
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-${{ runner.os }}-
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Run OWASP Dependency-Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: 'p2p'
+          path: '.'
+          format: 'HTML'
+          args: >
+            --enableRetired
+            --failOnCVSS 7
+        # Compares every library in your Gradle lockfile against the NVD CVE database.
+        # Pipeline fails if any dependency has a CVSS score ≥ 7 (High/Critical).
+
+      - name: Upload OWASP Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: owasp-report
+          path: reports/
+
+  # ════════════════════════════════════════════
+  # JOB 4 – BUILD & TEST
+  # ════════════════════════════════════════════
+  build-test:
+    name: 🏗️ Build & Unit Test
+    runs-on: ubuntu-latest
+    needs: [sast, dependency-check]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-${{ runner.os }}-
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Inject google-services.json from Secret
+        run: |
+          echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > app/google-services.json
+        # NEVER commit google-services.json to the repo.
+        # Store the file contents as a GitHub Secret named GOOGLE_SERVICES_JSON.
+
+      - name: Run Unit Tests
+        run: ./gradlew test --no-daemon
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: app/build/reports/tests/
+
+      - name: Build Release APK
+        run: ./gradlew assembleRelease --no-daemon
+        # For a signed release, add signing config using secrets below:
+        # KEYSTORE_FILE, KEY_ALIAS, KEY_PASSWORD, STORE_PASSWORD
+
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: app/build/outputs/apk/release/*.apk
+
+  # ════════════════════════════════════════════
+  # JOB 5 – DEPLOY (GitHub Release)
+  # Only runs on push to main after all checks pass
+  # ════════════════════════════════════════════
+  deploy:
+    name: 🚀 Deploy – Publish GitHub Release
+    runs-on: ubuntu-latest
+    needs: build-test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    permissions:
+      contents: write     # Needed to create a GitHub Release
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download Release APK
+        uses: actions/download-artifact@v4
+        with:
+          name: release-apk
+          path: apk/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: "Peerly Build #${{ github.run_number }}"
+          body: |
+            ## Automated Release 🚀
+
+            **Triggered by:** ${{ github.actor }}
+            **Commit:** ${{ github.sha }}
+
+            ### Security Checks Passed ✅
+            - Gitleaks secret scan
+            - CodeQL SAST analysis
+            - OWASP dependency vulnerability check
+
+            ### Artifacts
+            - Release APK attached below
+          files: apk/*.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # Creates a tagged GitHub Release with the APK attached.
+        # This is your deployment proof / URL for submission.
